@@ -1,49 +1,54 @@
-# Intelligent_Document_parsing_chatbot
-A RAG based LLM chatbot that understands data such as pdf, word, excel, .txt and can generate answers based on query from user.
+#  Intelligent Document Parsing Chatbot
 
-# 📁 Project Folder Structure
+A **RAG-based LLM chatbot** that can understand structured and unstructured data — including **PDF, Word, Excel, and text files** — and generate accurate answers to user queries based on document context.
+
+---
+
+## 📁 Project Folder Structure
+
+```bash
 rag_chatbot/
 │
 ├── 📄 README.md
 ├── 📄 requirements.txt
-├── 📄 .env                    # API keys, DB credentials
+├── 📄 .env                         # API keys, DB credentials
 │
 ├── 📁 data/
-│   ├── raw/                   # Original uploaded documents (PDF, DOCX, etc.)
-│   ├── processed/             # Cleaned text files or JSON after preprocessing
-│   └── embeddings/            # (Optional) Local vector store or FAISS index
+│   ├── raw/                        # Original uploaded documents (PDF, DOCX, etc.)
+│   ├── processed/                  # Cleaned or extracted text files
+│   └── embeddings/                 # Local vector store or FAISS index
 │
 ├── 📁 src/
 │   ├── __init__.py
 │   │
-│   ├── 📁 ingestion/          # Handles document ingestion and embedding
-│   │   ├── loader.py          # Load PDFs, DOCX, etc.
-│   │   ├── splitter.py        # Chunking logic
-│   │   ├── embedder.py        # Embedding model (e.g. OpenAI, SentenceTransformer)
-│   │   └── indexer.py         # Saves embeddings to vector DB
+│   ├── 📁 ingestion/               # Handles document ingestion and embedding
+│   │   ├── loader.py               # Load PDFs, DOCX, etc.
+│   │   ├── splitter.py             # Chunking logic
+│   │   ├── embedder.py             # Embedding model (OpenAI, SentenceTransformer)
+│   │   └── indexer.py              # Saves embeddings to vector DB
 │   │
-│   ├── 📁 retriever/          # Retrieves relevant docs from vector DB
+│   ├── 📁 retriever/               # Retrieves relevant docs from vector DB
 │   │   ├── retriever.py
-│   │   └── ranker.py          # (Optional) rerank results by similarity
+│   │   └── ranker.py               # (Optional) Re-ranks results by similarity
 │   │
-│   ├── 📁 llm/
-│   │   ├── generator.py       # Calls LLM to generate answer
-│   │   └── prompt_builder.py  # Combines context + query into final prompt
+│   ├── 📁 llm/                     # LLM prompt construction & response generation
+│   │   ├── generator.py            # Calls LLM to generate answer
+│   │   └── prompt_builder.py       # Combines context + query into final prompt
 │   │
-│   ├── 📁 api/
-│   │   ├── app.py             # FastAPI or Flask backend entry
-│   │   └── routes.py          # API endpoints for chat, ingestion, etc.
+│   ├── 📁 api/                     # FastAPI / Flask backend
+│   │   ├── app.py                  # API entry point
+│   │   └── routes.py               # Endpoints for chat, ingestion, etc.
 │   │
-│   ├── 📁 utils/
+│   ├── 📁 utils/                   # Helper functions and configs
 │   │   ├── logger.py
 │   │   ├── config.py
 │   │   └── helpers.py
 │   │
-│   └── main.py                # Entry point for chatbot pipeline
+│   └── main.py                     # Entry point for chatbot pipeline
 │
-├── 📁 notebooks/              # Jupyter notebooks for testing & experiments
+├── 📁 notebooks/                   # Jupyter notebooks for experiments
 │
-└── 📁 tests/                  # Unit tests
+└── 📁 tests/                       # Unit tests
     ├── test_ingestion.py
     ├── test_retriever.py
     └── test_llm.py
