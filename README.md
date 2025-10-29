@@ -2,7 +2,6 @@
 A RAG based LLM chatbot that understands data such as pdf, word, excel, .txt and can generate answers based on query from user.
 
 # 📁 Project Folder Structure
-###
 rag_chatbot/
 │
 ├── 📄 README.md
