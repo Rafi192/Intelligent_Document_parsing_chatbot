@@ -1,3 +1,4 @@
-tensorflow
 langchain
 openai
+faiss-cpu
+tiktoken

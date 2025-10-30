@@ -1,2 +1,3 @@
 .env
 # .env*
+rag_chatbot_env/
