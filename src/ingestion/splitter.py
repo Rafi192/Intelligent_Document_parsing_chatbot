@@ -1,8 +1,6 @@
 #this is to split the text of the files into chunks and by utilizing certain separators
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def split_documents(documents, chunk_size=800, chunk_overlap=100):
     """Splits documents into smaller chunks."""

@@ -1,3 +1,6 @@
 .env
 # .env*
 rag_chatbot_env/
+data/
+src/__pycache__/
+src/ingestion/__pycache__/
