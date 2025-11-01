@@ -4,6 +4,8 @@ A **RAG-based LLM chatbot** that can understand structured and unstructured data
 
 ---
 
+
+
 ## 📁 Project Folder Structure
 
 ```bash

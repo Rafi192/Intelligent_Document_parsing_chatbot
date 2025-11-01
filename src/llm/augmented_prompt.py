@@ -18,7 +18,7 @@ def augmented_propmt(query, retrieved_docs, max_docs =4):
         )
     
     prompt =  f"""
-You are an intelligent assistant with access to retrieved knowledge.
+You are an intelligent assistant with access to retrieved knowledge and chat history.
 
 use the following context to answer the user query cocisely and factually.
 if the answer is not in the context, say "I'm not sure based on the provided data"
