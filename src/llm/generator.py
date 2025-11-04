@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=r"C:\Users\hasan\Rafi_SAA\practice_project_1\Intelligent_Document_parsing_chatbot\.env")
 from langchain_community.chat_models import ChatOpenAI
 # from langchain_community.chat_message_histories import ChatMessageHistory
-from src.llm.augmented_prompt import augmented_propmt
+from src.llm.augmented_prompt import augmented_prompt
 # from langchain.chains import ConcersationChain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import InMemoryChatMessageHistory
@@ -82,7 +82,7 @@ def generate_llm_response(query, retrieved_docs, session_id="default_session", m
     #     "If context doesn't contain the answer, say 'I'm not sure about the  data!!'."
     # )
     # Get user input with augmented context
-    user_input_text = augmented_propmt(query, retrieved_docs, max_docs)
+    user_input_text = augmented_prompt(query, retrieved_docs, max_docs)
 
     # Build prompt template with memory placeholder
     prompt_template = ChatPromptTemplate.from_messages([

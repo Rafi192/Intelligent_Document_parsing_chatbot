@@ -4,6 +4,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.ingestion.indexer import load_faiss_index
 from src.retriever.retriever import get_retriever
 from src.llm.generator import generate_llm_response
+from src.retriever.mongodb_retriever import MongoDBRetriever
+from src.ingestion.embedder import get_embedder
+
 
 import time
 # Load existing FAISS index

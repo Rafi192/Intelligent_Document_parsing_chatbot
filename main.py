@@ -6,6 +6,8 @@ from src.retriever.retriever import get_retriever
 from src.llm.augmented_prompt import augmented_propmt
 from src.llm.generator import generate_llm_response
 import time
+from src.retriever.mongodb_retriever import MongoDBRetriever
+from src.ingestion.embedder import get_embedder
 # from src.llm.generator import 
 
 file_path = r"data/stock_market_analysis_one.pdf"
@@ -47,6 +49,8 @@ print(f"Retreived {len(retrieved_docs)} relevant chunks")
 response = generate_llm_response(query, retrieved_docs)
 
 print("LLM response : ", response)
+
+
 
 
 
