@@ -86,7 +86,7 @@ def generate_llm_response(query, retrieved_docs, session_id="default_session", m
 
     # Build prompt template with memory placeholder
     prompt_template = ChatPromptTemplate.from_messages([
-        ("system", "You are a helpful assistant that provides factual and concise answers using the given information and chat history."),
+        ("system", "You are a helpful assistant that uses both retrieved info (if available) and chat memory."),
         MessagesPlaceholder(variable_name="history"),
         ("human", "{input}")
     ])
