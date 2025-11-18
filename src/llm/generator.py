@@ -66,7 +66,7 @@ def generate_llm_response(query, retrieved_docs, session_id="default_session", m
     # System prompt
     system_prompt = {
         "role": "system",
-        "content": "You are a helpful assistant that analyzes documents and answers questions based on retrieved information and conversation context. Provide accurate, concise responses."
+        "content": "You are a helpful assistant that analyzes documents and answers questions based on retrieved information and conversation context. Provide accurate, concise responses. If the user query is not related to the documents, just respond with your general knowledge base. And before generating an asnwer, always ask the user which kind of information they are looking for, then responsd accordingly."
     }
     
     # Add current user message to history
