@@ -69,7 +69,7 @@ def main():
     print(f"    Loaded {len(documents)} documents")
     
     if len(documents) == 0:
-        print("\n⚠️  No documents found in MongoDB collection!")
+        print("\n  No documents found in MongoDB collection!")
         print("    Please ensure your MongoDB collection has data.")
         return
     
@@ -98,7 +98,7 @@ def main():
     indexer.save_index()
     
     print("\n" + "=" * 70)
-    print("✅ INGESTION COMPLETED SUCCESSFULLY!")
+    print(" INGESTION COMPLETED SUCCESSFULLY!")
     print("=" * 70)
     print(f"\nVector database created with {len(documents)} documents")
     print(f"Location: data/embeddings/mongodb_vectors/")
@@ -114,7 +114,7 @@ def main():
         print(f"\nSearching for: '{query}'")
         results = indexer.search(query, top_k=3)
         
-        print(f"\n📊 Top {len(results)} Results:")
+        print(f"\n Top {len(results)} Results:")
         print("-" * 70)
         for i, result in enumerate(results, 1):
             print(f"\n{i}. {result['metadata']['name']}")

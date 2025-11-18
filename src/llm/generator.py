@@ -18,109 +18,110 @@ sys.path.insert(0, str(project_root))
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=r"C:\Users\hasan\Rafi_SAA\practice_project_1\Intelligent_Document_parsing_chatbot\.env")
-from langchain_community.chat_models import ChatOpenAI
-# from langchain_community.chat_message_histories import ChatMessageHistory
+from openai import OpenAI
+
 from src.llm.augmented_prompt import augmented_prompt
-# from langchain.chains import ConcersationChain
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.chat_history import InMemoryChatMessageHistory
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-API_KEY = os.getenv("GPT_github_access_token")
-
-doc_parser_llm = ChatOpenAI(
-    model="openai/gpt-4o",
-    openai_api_key=API_KEY,
-    openai_api_base="https://models.github.ai/inference"
+# Initializing the OpenAI client with Hugging Face endpoint for LLaMA
+client = OpenAI(
+    base_url="https://router.huggingface.co/v1",
+    api_key=os.environ["HF_TOKEN_READ"],
 )
 
-# memory = InMemoryChatMessageHistory
-
+# In-memory conversation store (session_id -> list of messages)
 store = {}
 
 
-
-def get_session_history( session_id: str):
+def get_session_history(session_id: str):
+    """
+    Get or create conversation history for a session.
+    Returns list of message dicts compatible with OpenAI format.
+    """
     if session_id not in store:
-        store[session_id] = InMemoryChatMessageHistory()
+        store[session_id] = []
     
     return store[session_id]
 
-# def generate_llm_response(query, retrieved_docs, session_id="default_session", max_docs=4):
-   
-#     # Build augmented context prompt
-#     prompt_text = augmented_propmt(query, retrieved_docs, max_docs)
-
-#     # Create a new conversation chain (with history)
-#     # conversation = RunnableWithMessageHistory(
-#     #     doc_parser_llm,
-#     #     get_session_history,
-#     #     input_messages_key='input',
-#     #     history_messages_key='history',
-#     #     verbose=True
-#     # )
-
-#     # Invoke the LLM with the prompt
-#     # response = conversation.invoke(
-#     #     {"input": prompt_text},
-#     #     config={"configurable": {"session_id": session_id}}
-#     # )
-#     response = doc_parser_llm.invoke(prompt_text)
-
-
-#     # Return only the message text
-#     return response.content if hasattr(response, "content") else str(response)
 
 def generate_llm_response(query, retrieved_docs, session_id="default_session", max_docs=4):
     """
-    Generate response using retrieved docs + conversation memory.
+    Generate response using Meta LLaMA with retrieved docs + conversation memory.
+    
+    Args:
+        query: User's question
+        retrieved_docs: Documents retrieved from vector store
+        session_id: Session identifier for conversation history
+        max_docs: Maximum number of documents to include in context
+    
+    Returns:
+        str: Generated response from LLaMA
     """
-
-    # Static system prompt
-    # system_prompt = (
-    #     "You are an intelligent assistant that uses retrieved context and chat history. "
-    #     "If context doesn't contain the answer, say 'I'm not sure about the  data!!'."
-    # )
-    # Get user input with augmented context
+    
+    # Build augmented context prompt
     user_input_text = augmented_prompt(query, retrieved_docs, max_docs)
+    
+    # Get conversation history for this session
+    history = get_session_history(session_id)
+    
+    # System prompt
+    system_prompt = {
+        "role": "system",
+        "content": "You are a helpful assistant that analyzes documents and answers questions based on retrieved information and conversation context. Provide accurate, concise responses."
+    }
+    
+    # Add current user message to history
+    history.append({
+        "role": "user",
+        "content": user_input_text
+    })
+    
+    # Prepare messages: system prompt + conversation history
+    # Keep last 10 messages to avoid token limits
+    max_history_length = 10
+    if len(history) > max_history_length:
+        messages = [system_prompt] + history[-max_history_length:]
+    else:
+        messages = [system_prompt] + history
+    
+    try:
+        # Call LLaMA model via HuggingFace
+        completion = client.chat.completions.create(
+            model="meta-llama/Llama-3.1-8B-Instruct:novita",
+            messages=messages,
+            max_tokens=1024,
+            temperature=0.3,  # Lower temperature for more factual responses
+        )
+        
+        # Extract response
+        assistant_response = completion.choices[0].message.content
+        
+        # Add assistant response to history
+        history.append({
+            "role": "assistant",
+            "content": assistant_response
+        })
+        
+        # Update store
+        store[session_id] = history
+        
+        return assistant_response
+        
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return f"Sorry, I encountered an error: {str(e)}"
 
-    # Build prompt template with memory placeholder
-    prompt_template = ChatPromptTemplate.from_messages([
-        ("system", "You are a helpful assistant that uses both retrieved info (if available) and chat memory."),
-        MessagesPlaceholder(variable_name="history"),
-        ("human", "{input}")
-    ])
 
-    # LLM chain
-    chain = prompt_template | doc_parser_llm
-
-    # Wrap chain in memory
-    conversation = RunnableWithMessageHistory(
-        chain,
-        get_session_history,
-        input_messages_key="input",
-        history_messages_key="history"
-    )
-
-    # Invoke LLM
-    response = conversation.invoke(
-        {"input": user_input_text},
-        config={"configurable": {"session_id": session_id}}
-    )
-
-    return response.content if hasattr(response, "content") else str(response)
+def clear_session_history(session_id: str):
+    """
+    Clear conversation history for a specific session.
+    """
+    if session_id in store:
+        store[session_id] = []
+        print(f"Session {session_id} history cleared.")
 
 
-# print("hello")
-
-
-# response = converstaion.predict(input = augmented_propmt)
-
-# print(f"\nLLM Response: {response}")
-# if __name__ == "__main__":
-#     user_query = input("Enter your question: ")
-#     response = conversation.invoke(
-#         {"input": user_query},
-#         config={"configurable": {"session_id": "user1"}}
-#     )
-#     print("Response:", response)
+def get_all_sessions():
+    """
+    Get list of all active session IDs.
+    """
+    return list(store.keys())
