@@ -1,6 +1,6 @@
 # src/ingestion/indexer.py
 from langchain_community.vectorstores import FAISS
-from .embedder import get_embedder
+from .embedder_bge import get_embedder
 import os
 
 
