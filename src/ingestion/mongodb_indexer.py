@@ -2,8 +2,8 @@
 # FILE 2: src/ingestion/mongodb_indexer.py
 # Purpose: Create embeddings for MongoDB data and store in vector DB
 # =============================================================================
-
-import os
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.her.')))
 from typing import List, Dict, Any
 import numpy as np
 from openai import OpenAI
@@ -12,6 +12,7 @@ import pickle
 import logging
 from pathlib import Path
 import os
+from src.ingestion.embedder_bge import get_embedder
 logger = logging.getLogger(__name__)
 
 
@@ -36,12 +37,12 @@ class MongoDBVectorIndexer:
         self.embedder = embedder
         project_root = Path(__file__).parent.parent.parent  # adjust if your folder depth differs
         self.vector_store_path = (project_root / vector_store_path).resolve()
-        # self.vector_store_path = vector_store_path
+        # os.makedirs(self.vector_store_path, exist_ok=True)
         self.index = None
         self.documents = []
         
         # Create directory if it doesn't exist
-        os.makedirs(vector_store_path, exist_ok=True)
+        os.makedirs(self.vector_store_path, exist_ok=True)
     
     def create_embeddings(self, documents: List[Dict[str, Any]]) -> np.ndarray:
         """

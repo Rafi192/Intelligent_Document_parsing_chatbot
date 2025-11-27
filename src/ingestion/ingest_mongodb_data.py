@@ -9,8 +9,8 @@ sys.path.insert(0, str(project_root))
 
 from src.ingestion.mongodb_loader import MongoDBLoader
 from src.ingestion.mongodb_indexer import MongoDBVectorIndexer
-from src.ingestion.embedder import get_embedder  # Your existing embedder
-from src.utils.config import Config  # Your existing config
+from src.ingestion.embedder_bge import get_embedder  #bge-m3 embedder
+from src.utils.config import Config  
 from src.utils.logger import setup_logger
 from dotenv import load_dotenv
 
@@ -78,9 +78,9 @@ def main():
     print(f"    ID: {documents[0]['id']}")
     print(f"    Text preview: {documents[0]['text'][:200]}...")
     
-    # Initialize embedder (use your existing embedder)
+
     print(f"\n[4] Initializing embedder...")
-    embedder = get_embedder()  # Your existing embedder class
+    embedder = get_embedder()  
     
     # Initialize vector indexer
     print(f"\n[5] Creating vector index...")

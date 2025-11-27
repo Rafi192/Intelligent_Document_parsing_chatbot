@@ -1,9 +1,9 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.retriever.mongodb_retriever import MongoDBRetriever
-from src.ingestion.embedder import get_embedder
+from src.ingestion.embedder_bge import get_embedder
 from src.llm.generator import generate_llm_response
-from src.llm.augmented_prompt import augmented_prompt
+# from src.llm.augmented_prompt import augmented_prompt
 
 # Initialize components
 embedder = get_embedder()
