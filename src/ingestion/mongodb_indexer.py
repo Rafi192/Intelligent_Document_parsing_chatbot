@@ -1,12 +1,7 @@
-# =============================================================================
-# FILE 2: src/ingestion/mongodb_indexer.py
-# Purpose: Create embeddings for MongoDB data and store in vector DB
-# =============================================================================
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.her.')))
 from typing import List, Dict, Any
 import numpy as np
-from openai import OpenAI
 import faiss
 import pickle
 import logging
@@ -17,92 +12,62 @@ logger = logging.getLogger(__name__)
 
 
 class MongoDBVectorIndexer:
-    """
-    Creates embeddings for MongoDB documents and stores them in FAISS vector DB.
-    Integrates with existing RAG pipeline's embedder.
-    """
-    
     def __init__(
         self,
-        embedder,  # Your existing embedder from src/ingestion/embedder.py
+        embedder, 
         vector_store_path: str = "data/embeddings/mongodb_vectors"
     ):
-        """
-        Initialize indexer with embedder and vector store path.
-        
-        Args:
-            embedder: Instance of your existing embedder class
-            vector_store_path: Path to save FAISS index and metadata
-        """
+       
         self.embedder = embedder
-        project_root = Path(__file__).parent.parent.parent  # adjust if your folder depth differs
+        project_root = Path(__file__).parent.parent.parent  
         self.vector_store_path = (project_root / vector_store_path).resolve()
-        # os.makedirs(self.vector_store_path, exist_ok=True)
         self.index = None
         self.documents = []
-        
-        # Create directory if it doesn't exist
+        # This is just to ensure if the creating a directory if not exists
         os.makedirs(self.vector_store_path, exist_ok=True)
     
     def create_embeddings(self, documents: List[Dict[str, Any]]) -> np.ndarray:
-        """
-        Create embeddings for a list of documents.
-        
-        Args:
-            documents: List of formatted documents with 'text' field
-            
-        Returns:
-            Numpy array of embeddings
-        """
         texts = [doc['text'] for doc in documents]
         
         logger.info(f"Creating embeddings for {len(texts)} documents...")
-        
-        # Use your existing embedder
         embeddings = []
         for text in texts:
             embedding = self.embedder.embed_query(text)
             embeddings.append(embedding)
         
-        embeddings_array = np.array(embeddings).astype('float32')
-        
+        embeddings_array = np.array(embeddings).astype('float32')   
         logger.info(f"Created embeddings with shape: {embeddings_array.shape}")
         return embeddings_array
     
+
     def build_index(self, documents: List[Dict[str, Any]]):
-        """
-        Build FAISS index from documents.
-        
-        Args:
-            documents: List of formatted documents
-        """
-        # Create embeddings
         embeddings = self.create_embeddings(documents)
         
-        # Build FAISS index
+        # Building the FAISS index
         dimension = embeddings.shape[1]
-        self.index = faiss.IndexFlatIP(dimension)  # Inner product (cosine similarity)
+        self.index = faiss.IndexFlatIP(dimension)  
         
-        # Normalize embeddings for cosine similarity
+        # Normalizing embeddings for cosine similarity
         faiss.normalize_L2(embeddings)
         
-        # Add embeddings to index
+        # Adding embeddings to index
         self.index.add(embeddings)
         
-        # Store documents for retrieval
+        # Storing documents for retrieval
         self.documents = documents
         
         logger.info(f"Built FAISS index with {self.index.ntotal} vectors")
     
+
     def save_index(self):
         """Save FAISS index and document metadata to disk."""
         index_path = os.path.join(self.vector_store_path, "faiss_index.bin")
         metadata_path = os.path.join(self.vector_store_path, "documents.pkl")
         
-        # Save FAISS index
+        # Saving FAISS index
         faiss.write_index(self.index, index_path)
         
-        # Save documents metadata
+        # Saving documents metadata
         with open(metadata_path, 'wb') as f:
             pickle.dump(self.documents, f)
         
@@ -117,10 +82,10 @@ class MongoDBVectorIndexer:
         if not os.path.exists(index_path):
             raise FileNotFoundError(f"Index not found at {index_path}")
         
-        # Load FAISS index
+        # Loading FAISS index
         self.index = faiss.read_index(index_path)
         
-        # Load documents metadata
+        # Loading documents metadata
         with open(metadata_path, 'rb') as f:
             self.documents = pickle.load(f)
         
@@ -141,14 +106,14 @@ class MongoDBVectorIndexer:
         if self.index is None:
             raise ValueError("Index not built or loaded. Call build_index() or load_index() first.")
         
-        # Create query embedding
+        # Creating query embedding
         query_embedding = self.embedder.embed_query(query)
         query_vector = np.array([query_embedding]).astype('float32')
         
-        # Normalize for cosine similarity
+        # Normalizing for cosine similarity
         faiss.normalize_L2(query_vector)
         
-        # Search
+        # Searching the index
         scores, indices = self.index.search(query_vector, top_k)
         
         # Prepare results
