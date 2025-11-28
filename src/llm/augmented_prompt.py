@@ -1,3 +1,4 @@
+
 # Restricted words to check in queries
 RESTRICTED_WORDS = [
     "kill", "murder", "suicide", "bomb", "weapon", "drug", "illegal",
@@ -7,20 +8,7 @@ RESTRICTED_WORDS = [
 
 
 def augmented_prompt(query, retrieved_docs, max_docs=4):
-    """
-    Builds a context-aware prompt for the LLM using retrieved MongoDB documents.
 
-    Args:
-        query (str): User's search query
-        retrieved_docs (list): List of dict objects from MongoDB retriever.
-                               Each dict should have 'text' and 'metadata' fields.
-        max_docs (int): Number of top documents to include in context.
-
-    Returns:
-        str: A complete prompt ready for LLM 
-    """
-
-    # 🔒 Step 1: Restricted content check
     query_lower = query.lower()
     if any(word in query_lower for word in RESTRICTED_WORDS):
         return (
@@ -28,7 +16,6 @@ def augmented_prompt(query, retrieved_docs, max_docs=4):
             "Is there a product I can help you find?"
         )
 
-    # 🧠 Step 2: Build context if docs exist
     context_parts = []
     if retrieved_docs and len(retrieved_docs) > 0:
         for i, doc in enumerate(retrieved_docs[:max_docs], 1):
@@ -42,13 +29,13 @@ def augmented_prompt(query, retrieved_docs, max_docs=4):
             if metadata.get('price'):
                 product_text += f"Price: ${metadata['price']}\n"
 
-            # Add main product description or text
+           
             product_text += f"\n{doc.get('text', '')}\n"
             context_parts.append(product_text)
 
         context = "\n" + "=" * 70 + "\n".join(context_parts)
 
-        # 🧩 Case 1: RAG context available
+        # my prompt with context 
         prompt = f"""
 You are a helpful e-commerce shopping assistant with access to product information.
 
@@ -67,7 +54,7 @@ Answer:
 """
 
     else:
-        # 🧩 Case 2: No context available → fallback to memory or reasoning
+        # prmpt without context
         prompt = f"""
 You are a helpful e-commerce shopping assistant.
 
