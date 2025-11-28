@@ -1,6 +1,5 @@
 # now comes the data embedding part of the RAG model to store that in the vector DB
 
-# converting text into vectors
 from transformers import AutoTokenizer, AutoModel
 import torch
 import numpy as np

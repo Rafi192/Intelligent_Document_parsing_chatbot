@@ -4,20 +4,14 @@ from typing import List
 
 class BGE_M3_Embedder:
     def __init__(self, model_name="BAAI/bge-m3", batch_size=32, chunk_size=300, verbose=True):
-        """
-        Args:
-            model_name (str): Name of the SentenceTransformer model
-            batch_size (int): Number of texts to process at once
-            chunk_size (int): Maximum tokens per chunk (approximate for long texts)
-            verbose (bool): Print debug info
-        """
+       
         self.model = SentenceTransformer(model_name)
         self.batch_size = batch_size
         self.chunk_size = chunk_size
         self.verbose = verbose
 
     def _chunk_text(self, text: str) -> List[str]:
-        """Split long text into chunks."""
+        
         words = text.split()
         if len(words) <= self.chunk_size:
             return [text]
@@ -27,7 +21,7 @@ class BGE_M3_Embedder:
         return chunks
 
     def _embed_batch(self, texts: List[str]) -> np.ndarray:
-        """Encode texts in batches with normalization."""
+        
         all_embeddings = []
         for i in range(0, len(texts), self.batch_size):
             batch = texts[i:i+self.batch_size]
@@ -36,16 +30,13 @@ class BGE_M3_Embedder:
         return np.vstack(all_embeddings)
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        """
-        Embed a list of documents, handling long text chunking.
-        Returns a list of embeddings (one per document or chunk).
-        """
+        
         if not texts:
             return []
 
-        # Chunk long texts
+    
         all_chunks = []
-        chunk_map = []  # map to reconstruct document embeddings if needed
+        chunk_map = []  
         for idx, text in enumerate(texts):
             if not text or not text.strip():
                 continue
@@ -53,14 +44,14 @@ class BGE_M3_Embedder:
             all_chunks.extend(chunks)
             chunk_map.append((idx, len(chunks)))
 
-        # Embed all chunks
+     
         embeddings = self._embed_batch(all_chunks)
 
         if self.verbose:
             print(f"Embedded {len(all_chunks)} chunks from {len(texts)} documents.")
             print(f"Vector shape: {embeddings.shape}")
 
-        # Aggregate chunk embeddings per document (mean pooling)
+        
         doc_embeddings = []
         start = 0
         for _, n_chunks in chunk_map:
@@ -71,9 +62,6 @@ class BGE_M3_Embedder:
         return [vec.tolist() for vec in doc_embeddings]
 
     def embed_query(self, text: str) -> List[float]:
-        """
-        Embed a single query string.
-        """
         if not text or not text.strip():
             return []
 
