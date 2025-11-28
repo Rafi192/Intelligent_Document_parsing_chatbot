@@ -2,8 +2,6 @@
 import os
 import sys
 from pathlib import Path
-
-# Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -14,17 +12,14 @@ from src.utils.config import Config
 from src.utils.logger import setup_logger
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
 
-# Setup logger
+load_dotenv()
 logger = setup_logger(__name__)
 
 
 def main():
     """
-    Main function to ingest MongoDB data into vector database.
-    
+    Main function to ingest MongoDB data into vector database, performing the following,
     Steps:
     1. Connect to MongoDB and load product data
     2. Format documents for RAG pipeline
@@ -38,7 +33,7 @@ def main():
     print("MONGODB DATA INGESTION INTO RAG VECTOR DATABASE")
     print("=" * 70)
     
-    # Configuration
+    # MongoDB connection parameters from environment variables
     MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
     DATABASE_NAME = os.getenv("MONGODB_DATABASE", "ecommerce")
     COLLECTION_NAME = os.getenv("MONGODB_COLLECTION", "products")
@@ -47,7 +42,7 @@ def main():
     print(f"    Database: {DATABASE_NAME}")
     print(f"    Collection: {COLLECTION_NAME}")
     
-    # Initialize MongoDB loader
+   
     mongo_loader = MongoDBLoader(
         connection_string=MONGODB_URI,
         database_name=DATABASE_NAME,
@@ -103,8 +98,7 @@ def main():
     print(f"\nVector database created with {len(documents)} documents")
     print(f"Location: data/embeddings/mongodb_vectors/")
     print(f"\nYou can now use the retriever to search this data!")
-    
-    # Close MongoDB connection
+  
     mongo_loader.close()
     
     # Optional: Test search

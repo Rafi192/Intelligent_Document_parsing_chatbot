@@ -1,4 +1,4 @@
-#read docs ( pdf, word, excel etc)
+#this is used fro loading different documents
 # src/ingestion/loader.py
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, UnstructuredWordDocumentLoader
 from pathlib import Path
