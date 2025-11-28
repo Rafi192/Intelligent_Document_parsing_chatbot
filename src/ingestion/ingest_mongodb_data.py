@@ -106,7 +106,7 @@ def main():
     if test_search.lower() == 'yes':
         query = input("Enter your search query: ")
         print(f"\nSearching for: '{query}'")
-        results = indexer.search(query, top_k=3)
+        results = indexer.search(query, top_k=5)
         
         print(f"\n Top {len(results)} Results:")
         print("-" * 70)

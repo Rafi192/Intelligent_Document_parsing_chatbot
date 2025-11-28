@@ -5,16 +5,10 @@
 # # Add project root to path - go up TWO levels from generator.py
 # # generator.py is in src/llm/, so we need to go up to project root
 
-# # ---------------------------
-# # Setup path and environment
-# # ---------------------------
+
 # project_root = Path(__file__).parent.parent.parent
 # sys.path.insert(0, str(project_root))
 
-
-# # ---------------------------
-# # Imports
-# # ---------------------------
 
 # from dotenv import load_dotenv
 # load_dotenv(dotenv_path=r"C:\Users\hasan\Rafi_SAA\practice_project_1\Intelligent_Document_parsing_chatbot\.env")
@@ -33,10 +27,6 @@
 
 
 # def get_session_history(session_id: str):
-#     """
-#     Get or create conversation history for a session.
-#     Returns list of message dicts compatible with OpenAI format.
-#     """
 #     if session_id not in store:
 #         store[session_id] = []
     
@@ -44,18 +34,6 @@
 
 
 # def generate_llm_response(query, retrieved_docs, session_id="default_session", max_docs=4):
-#     """
-#     Generate response using Meta LLaMA with retrieved docs + conversation memory.
-    
-#     Args:
-#         query: User's question
-#         retrieved_docs: Documents retrieved from vector store
-#         session_id: Session identifier for conversation history
-#         max_docs: Maximum number of documents to include in context
-    
-#     Returns:
-#         str: Generated response from LLaMA
-#     """
     
 #     # Build augmented context prompt
 #     user_input_text = augmented_prompt(query, retrieved_docs, max_docs)
@@ -75,8 +53,7 @@
 #         "content": user_input_text
 #     })
     
-#     # Prepare messages: system prompt + conversation history
-#     # Keep last 10 messages to avoid token limits
+
 #     max_history_length = 10
 #     if len(history) > max_history_length:
 #         messages = [system_prompt] + history[-max_history_length:]
@@ -112,18 +89,14 @@
 
 
 # def clear_session_history(session_id: str):
-#     """
-#     Clear conversation history for a specific session.
-#     """
+
 #     if session_id in store:
 #         store[session_id] = []
 #         print(f"Session {session_id} history cleared.")
 
 
 # def get_all_sessions():
-#     """
-#     Get list of all active session IDs.
-#     """
+#returing the list of all active session ids
 #     return list(store.keys())
 
 #----------------------------------------------------------------
@@ -131,26 +104,13 @@
 import sys
 import os
 from pathlib import Path
-
-# ---------------------------
-# Setup path and environment
-# ---------------------------
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=str(project_root / ".env"))
-
-# Gemini imports
 import google.generativeai as genai
-
-# Your augmented prompt
 from src.llm.augmented_prompt import augmented_prompt
-
-
-# ---------------------------
-# Gemini Initialization
-# ---------------------------
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -159,25 +119,18 @@ store = {}
 
 
 def get_session_history(session_id: str):
-    """Returns the conversation history list for the session."""
     if session_id not in store:
         store[session_id] = []
     return store[session_id]
 
 
 def _convert_to_gemini_messages(system_prompt, history):
-    """
-    Convert OpenAI-style messages to Gemini format.
-    """
     gemini_messages = []
-
-    # Add system prompt first
     gemini_messages.append({
         "role": "user",  # Gemini does not have 'system' role
         "parts": [system_prompt["content"]]
     })
 
-    # Add conversation history
     for msg in history:
         role = "user" if msg["role"] == "user" else "model"
         gemini_messages.append({
@@ -189,16 +142,9 @@ def _convert_to_gemini_messages(system_prompt, history):
 
 
 def generate_llm_response(query, retrieved_docs, session_id="default_session", max_docs=4):
-    """
-    Generate the LLM response using Gemini & retrieved documents.
-    """
-    # Build the augmented prompt
     user_input_text = augmented_prompt(query, retrieved_docs, max_docs)
-
-    # Conversation history
     history = get_session_history(session_id)
 
-    # System prompt (stored separately)
     system_prompt = {
         "role": "system",
         "content": (
@@ -210,10 +156,7 @@ def generate_llm_response(query, retrieved_docs, session_id="default_session", m
         )
     }
 
-    # Append the current user message to history
     history.append({"role": "user", "content": user_input_text})
-
-    # Limit conversation history (last 10)
     max_history_length = 10
     if len(history) > max_history_length:
         trimmed_history = history[-max_history_length:]
