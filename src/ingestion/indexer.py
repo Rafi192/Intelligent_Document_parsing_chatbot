@@ -5,7 +5,6 @@ import os
 
 
 def create_faiss_index(docs, index_path="data/embeddings/faiss_index"):
-    """Creates a FAISS index from documents and saves it locally."""
     embedder = get_embedder()
     vectorstore = FAISS.from_documents(docs, embedder)
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
@@ -19,7 +18,6 @@ def create_faiss_index(docs, index_path="data/embeddings/faiss_index"):
     return vectorstore
 
 def load_faiss_index(index_path="data/embeddings/faiss_index"):
-    """Loads a FAISS index from disk."""
     embedder = get_embedder()
     vectorstore = FAISS.load_local(index_path, embedder, allow_dangerous_deserialization=True)
     print(f"Loaded FAISS index from {index_path}")
