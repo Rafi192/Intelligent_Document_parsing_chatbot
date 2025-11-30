@@ -78,7 +78,7 @@ def main():
     VECTOR_STORE_PATH = "data/embeddings/medical_practice_vectors"
     
     # Embedding model
-    EMBEDDING_MODEL = "bert-base-uncased"  # Multilingual, high quality
+    EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"  # Multilingual, high quality
     # Alternatives:
     # - "BAAI/bge-base-en-v1.5" (English only, faster)
     # - "bert-base-uncased" (lightweight)

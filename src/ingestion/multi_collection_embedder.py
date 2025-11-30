@@ -21,7 +21,7 @@ class MultiCollectionEmbedder(Embeddings):
     
     def __init__(
         self, 
-        model_name: str = "bert-base-uncased",  # Default to BGE-M3 for multilingual
+        model_name: str = "BAAI/bge-base-en-v1.5",  # Default to BGE-M3 for multilingual
         device: str = None,
         max_length: int = 512,
         batch_size: int = 32,
@@ -235,5 +235,5 @@ def get_embedder(model_name: str = "bert-base-uncased", **kwargs) -> MultiCollec
 # Backward compatibility with your existing code
 class BERTEmbeddings(MultiCollectionEmbedder):
     """Alias for backward compatibility"""
-    def __init__(self, model_name="bert-base-uncased", device=None):
+    def __init__(self, model_name="BAAI/bge-base-en-v1.5", device=None):
         super().__init__(model_name=model_name, device=device)
