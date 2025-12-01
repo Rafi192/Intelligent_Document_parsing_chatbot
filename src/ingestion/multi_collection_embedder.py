@@ -214,7 +214,7 @@ class MultiCollectionEmbedder(Embeddings):
         return len(dummy_embedding)
 
 
-def get_embedder(model_name: str = "bert-base-uncased", **kwargs) -> MultiCollectionEmbedder:
+def get_embedder(model_name: str = "BAAI/bge-base-en-v1.5", **kwargs) -> MultiCollectionEmbedder:
     """
     Factory function to create embedder
     
@@ -233,7 +233,7 @@ def get_embedder(model_name: str = "bert-base-uncased", **kwargs) -> MultiCollec
 
 
 # Backward compatibility with your existing code
-class BERTEmbeddings(MultiCollectionEmbedder):
-    """Alias for backward compatibility"""
-    def __init__(self, model_name="BAAI/bge-base-en-v1.5", device=None):
-        super().__init__(model_name=model_name, device=device)
+# class BERTEmbeddings(MultiCollectionEmbedder):
+#     """Alias for backward compatibility"""
+#     def __init__(self, model_name="BAAI/bge-base-en-v1.5", device=None):
+#         super().__init__(model_name=model_name, device=device)
