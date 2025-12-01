@@ -35,6 +35,7 @@ if doc:
     for d in collection.find().limit(10):
         print("-------")
         print("document format:", d,"\n")
+        print("-------")
 
 else:
     print("error loading collection format")
