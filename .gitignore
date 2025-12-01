@@ -1,7 +1,7 @@
 .env
 # .env*
 rag_chatbot_env/
-data/
+# data/
 src/__pycache__/
 src/ingestion/__pycache__/
 src/llm/__pycache__/
