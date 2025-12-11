@@ -1,7 +1,3 @@
-"""
-Enhanced Augmented Prompt Builder for Multi-Collection Medical RAG
-Creates well-structured prompts with retrieved context
-"""
 
 from typing import List, Dict, Any
 
@@ -19,7 +15,7 @@ def augmented_prompt(
     Args:
         query: User's question
         retrieved_docs: List of retrieved documents from vector search
-                       Each doc should have: 'text', 'metadata', 'similarity_score'
+    Each doc should have: 'text', 'metadata', 'similarity_score'
         max_docs: Maximum number of documents to include
         include_scores: Whether to show relevance scores
         include_sources: Whether to show source collections
@@ -179,7 +175,7 @@ def augmented_prompt_with_intent(
     prompt_parts.append(f"=== {intent.upper()} QUERY ===")
     prompt_parts.append(query)
     prompt_parts.append("")
-    
+
     # Intent-specific instructions
     intent_instructions = {
         'booking': "Guide the user through the appointment booking process based on the information provided.",

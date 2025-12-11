@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.retriever.mongodb_retriever import MongoDBRetriever
 from src.ingestion.multi_collection_embedder import get_embedder
-from src.llm.generator import generate_llm_response
+from src.llm.enhanced_generator import generate_llm_response
 
 
 # Initialize components
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             continue
             
         if query.lower() in ["exit", "quit", "q"]:
-            print("\n👋 Goodbye!")
+            print("\n Goodbye!")
             break
         
         try:
@@ -74,4 +74,4 @@ if __name__ == "__main__":
             print("-" * 70)
             
         except Exception as e:
-            print(f"\n❌ Error: {e}\n")
+            print(f"\n Error: {e}\n")

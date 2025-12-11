@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 
 class MongoDBLoader:
-  
     
     def __init__(self,connection_string: str,database_name: str,collection_name: str):
         self.client = MongoClient(connection_string)
